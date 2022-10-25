@@ -1,0 +1,151 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int getYear(void){
+	int n=-1;
+	while(1){
+		printf("入力した年月から3ヶ月分のカレンダーを表示します.\n");
+		printf("input year\n");
+		scanf("%d",&n);
+		if(n>=0){
+			break;
+		}
+	}
+	return n;
+}
+
+int getMonth(void){
+	int m=0;
+	while(1){
+		printf("input month\n");
+		scanf("%d",&m);
+		if(m>0&&m<13){
+			break;
+		}
+	}
+	return m;
+}
+
+int checkLeapYear(int y[],int num){
+	int n;
+	if( y[num]%400==0 || (y[num]%4==0 && y[num]%100!=0)){
+		n=1;
+	}else{
+		n=0;
+	}
+	return n;
+}
+
+int getMonthDays(int y[],int m[],int num){
+	int dm;
+	switch(m[num]){
+	case 1:return 31;
+	case 2:return 28+checkLeapYear(y,num);
+	case 3:
+	case 5:
+	case 7:
+	case 8:
+	case 10:
+	case 12:return 31;
+	case 4:
+	case 6:
+	case 9:
+	case 11:return 30;
+	}
+	return dm;
+}
+
+int getWeekday(int y[],int m[],int d[],int num){
+	int h,yc,mc;
+	if(m[num]==1||m[num]==2){
+		yc=y[num]-1;
+		mc=m[num]+12;
+	}else{
+		yc=y[num];
+		mc=m[num];
+	}
+	
+	h=((yc+(yc/4)-(yc/100)+(yc/400)+(13*mc+8)/5)+1)%7;
+}
+
+int printCalendar2(int y[],int m[],int d[],int h[],int num){
+	/*変数の定義*/
+	int i,j,k;
+	
+	/*年月の表示*/
+	for(i=0;i<num;i++){
+		printf("       %4d年%2d月       ",y[i],m[i]);
+		printf("  ");
+	}
+	printf("\n");
+	/*点線*/
+	for(i=0;i<num;i++){
+		for(j=0;j<24;j++){
+			printf("-");
+		}
+		printf("  ");
+	}
+	printf("\n");
+	/*曜日*/
+	for(i=0;i<num;i++){
+		printf("  日 月 火 水 木 金 土  ");
+		printf("  ");
+	}
+	printf("\n");
+	/*点線*/
+	for(i=0;i<num;i++){
+		for(j=0;j<24;j++){
+			printf("-");
+		}
+		printf("  ");
+	}
+	printf("\n");
+	/*1行目定義*/
+	int cal1[7];
+	int day=0;
+
+	/*カレンダー表示*/
+	for(k=0;k<6;k++){
+	for(i=0;i<num;i++){
+		for(j=0;j<7;j++){
+			cal1[j]=day++;
+			cal1[j]=cal1[j]-(h[i]-1)-(7*i)-(k*14);
+			if( (cal1[j]>0) && (cal1[j]<=d[i]) ){
+				printf("%3d",cal1[j]);
+			}else{
+				printf("   ");
+			}
+		}
+		printf("     ");
+	}
+	printf("\n");
+	}
+	/*点線*/
+	for(i=0;i<num;i++){
+		for(j=0;j<24;j++){
+			printf("-");
+		}
+		printf("  ");
+	}
+}
+	
+int main(void){
+	int n=3;
+	int year[n],month[n],days[n],youbi[n],m;
+	year[0]=getYear();
+	month[0]=getMonth();
+	for(m=1;m<n;m++){
+		month[m]=month[m-1]+1;
+		year[m]=year[0];
+		if(month[m]>12){
+			month[m]=1;
+			year[m]=year[0]+1;
+		}
+	}
+	for(m=0;m<n;m++){
+		days[m]=getMonthDays(year,month,m);
+		youbi[m]=getWeekday(year,month,days,m);
+	}
+	printCalendar2(year,month,days,youbi,n);
+	return 0;
+}
